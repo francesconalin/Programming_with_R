@@ -27,7 +27,7 @@ getwd() #this will give you the working directory. Make sure to include
 
 #    This command will create an 'object' called Data_Mixer_Raw
 #    and fill this object with the content that read_excel gives
-Data_Mixer_Raw <- read_excel("2023.08.09_301-202_Macros_Yellow-Red_ForAnalysis.xlsx")
+Data_Mixer_Raw <- read_excel("2023_Mixer_Analysis.xlsx")
 
 head(Data_Mixer_Raw, 6) 
 # if everything is good, the console will print the first 
@@ -49,27 +49,9 @@ head(First_example, 6)
 # function n(). this function will show the number of elements for each group
 
 
-# now we do the real analysis
-AVG_Intensity <- Data_Mixer_Raw %>% 
-  group_by(chip, dye_color, conc, pos_chip) %>%  
-  summarise(N = n(), Intensity_AVG = mean(intensity),
-            # Intensity_Var = sum((Intensity-Intensity_AVG)^2) /n(), 
-            Intensity_SD = sd(intensity), 
-            Intensity_CV = Intensity_SD/Intensity_AVG,
-            Chip_MI = 1. - Intensity_CV, .groups = "keep")
-head(AVG_Intensity, 6)
-# with these lines we:
-# - created and filled the dataframe "AVG_Intensity" with the processed version
-#   of Data_Mixer_Raw
-# - Data_Mixer_Raw was first grouped by its variables chip, dye_color, conc and pos_chip
-#   and then summarised the content of each group.
-# we used summarise to introduce additional variables: the average, SD and MI.
-#---------------------------------------------------------------
-
 
 #---------------------------------------------------------------
 # 4) Plotting
-
 # example: plotting the data in First_example with the number of values in
 # function of the chip name
 ggplot(data = First_example)+
@@ -78,19 +60,24 @@ ggplot(data = First_example)+
 
 # now you can play with variables and functions to get different results, for example
 # you can replace the function geom_points with geom_bar (uncomment next lines)
-# ggplot(data = First_example)+
-#   aes(x = chip, y = N)+
-#   geom_bar(stat = "identity") #this will  give a barplot
+ ggplot(data = First_example)+
+   aes(x = chip, y = N)+
+   geom_bar(stat = "identity") #this will  give a barplot
 
 
-# --------------------------Mixer plots------------------------
-# before plotting we introduce a coupke variables to scale the second axis.
-# this is beacause we want to overlap different plots and it is slightly more complicated
-q <- - 0.2
-coeff <- (1. - q)/ 500.
-
-# now we open an svg file where the plot will  be saved.
-# to just plot we can comment this line or simply not select it
-svg("2023-08-09_Intensity_vs_Concentration.svg", width = 10, height = 5) #open file
-
-
+#---------------------------------------------------------------
+# 4) Saving
+# writing a csv file     "Location/Directory/File name.csv"    
+write.csv(First_example, "C:/Users/Mixer_analysis.csv")
+ 
+ # saving the plot for Inkscape (vector graphics)
+svg("Mixer_plot.svg", width = 10, height = 5) #open file
+ 
+ggplot(data = First_example)+
+  aes(x = chip, y = N)+
+  geom_point()
+ 
+dev.off() #this command is  necessary to close the svg file
+ 
+ 
+ 
