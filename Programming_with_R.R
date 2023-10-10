@@ -66,7 +66,7 @@ ggplot(data = First_example)+
 
 
 #---------------------------------------------------------------
-# 4) Saving
+# 5) Saving
 # writing a csv file     "Location/Directory/File name.csv"    
 write.csv(First_example, "C:/Users/Mixer_analysis.csv")
  
